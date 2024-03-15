@@ -49,7 +49,7 @@ def caesar(text, key):
         key = int(key) % 26
     except:
         print('Key is not valid')
-        return
+        sys.exit()
     result = ''
     for char in text:
         if not char.isalpha():
@@ -68,14 +68,17 @@ def caesar_break_text(crypto, extra):
     if extra == '' or crypto == '':
         print('Crypto or extra text is empty')
         return None, None
-    for move in range(0, 26):
-        char = ord(crypto[0]) + move
-        if char > 122:
-            char -= 26
-        if chr(char) == extra[0]:
-            found_key = 26 - move
-            decrypted_text = caesar(crypto, '-' + str(found_key))
-            return str(found_key), decrypted_text
+    for extra_char, crypto_char in zip(extra, crypto):
+        if not extra_char.isalpha(): continue
+        for move in range(0, 26):
+            char = ord(crypto_char) + move
+            if char > 122:
+                char -= 26
+            if chr(char) == extra_char:
+                found_key = 26 - move
+                decrypted_text = caesar(crypto, '-' + str(found_key))
+                return str(found_key), decrypted_text
+    return None, None
 
 def caesar_break_force(crypto):
     result = ''
@@ -92,11 +95,11 @@ def affine_encrypt(text, a, b):
         if nwd(a, 26) != 1: raise Exception
     except:
         print('Key is not valid')
-        return
+        sys.exit()
     result = ''
     for char in text:
-        if char == ' ':
-            result += ' '
+        if not char.isalpha():
+            result += char
             continue
         new_char = ord(char) - 97
         new_char = (a * new_char + b) % 26
@@ -111,15 +114,15 @@ def affine_decrypt(text, a, b):
         if nwd(a, 26) != 1: raise Exception
     except:
         print('Key is not valid')
-        return
+        sys.exit()
     a_inv = mod_inv(a)
     if not a_inv:
         print('Could not find inverse of a')
         return
     result = ''
     for char in text:
-        if char == ' ':
-            result += ' '
+        if not char.isalpha():
+            result += char
             continue
         new_char = ord(char) - 97
         new_char = (a_inv * (new_char - b)) % 26
@@ -128,13 +131,13 @@ def affine_decrypt(text, a, b):
     return result
 
 def affine_break_text(crypto, extra):
-    crypto = crypto.replace(' ', '')
+    crypto_no_spaces = crypto.replace(' ', '')
     extra = extra.replace(' ', '')
-    if extra == '' or crypto == '':
+    if extra == '' or crypto_no_spaces == '':
         print('Crypto or extra text is empty')
-        return
+        return None, None
     possible_keys = []
-    for extra_char, crypto_char in zip(extra, crypto):
+    for extra_char, crypto_char in zip(extra, crypto_no_spaces):
         for a in range(1, 26):
             if nwd(a, 26) != 1: continue
             for b in range(26):
@@ -146,8 +149,10 @@ def affine_break_text(crypto, extra):
     most_common_items = counter.most_common()
     most_common_count = most_common_items[0][1]
     if most_common_count > most_common_items[1][1]:
-        return most_common_items[0][0]
-    return
+        key = most_common_items[0][0]
+        decrypted_text = affine_decrypt(crypto, key[0], key[1])
+        return key, decrypted_text 
+    return None, None
 
 def affine_break_force(crypto):
     result = ''
@@ -165,6 +170,8 @@ def main():
         if result:
             print('Encrypted text:', result)
             write_text('crypto.txt', result)
+        else:
+            print("No text provided")
 
     elif selected_cipher == 'c' and selected_mode == 'd':
         print("You have selected caesar cipher decryption")
@@ -172,6 +179,8 @@ def main():
         if result:
             print('Decrypted text:', result)
             write_text('decrypt.txt', result)
+        else:
+            print("No text provided")
 
     elif selected_cipher == 'c' and selected_mode == 'j':
         print("You have selected caesar cipher cryptanalysis with text sample")
@@ -198,6 +207,8 @@ def main():
         if result: 
             print("Encrypted text:", result)
             write_text('crypto.txt', result)
+        else:
+            print("No text provided")
 
     elif selected_cipher == 'a' and selected_mode == 'd':
         print("You have selected affine cipher decryption")
@@ -206,15 +217,19 @@ def main():
         if result: 
             print('Decrypted text:', result)
             write_text('decrypt.txt', result)
+        else:
+            print("No text provided")
 
     elif selected_cipher == 'a' and selected_mode == 'j':
         print("You have selected affine cipher cryptanalysis with text sample")
-        result = affine_break_text(read_text('crypto.txt'), read_text('extra.txt'))
-        if result: 
-            print("Found key:", result)
-            write_text('key-found.txt', f'{result[0]} {result[1]}')
+        found_key, result = affine_break_text(read_text('crypto.txt'), read_text('extra.txt'))
+        if result and found_key: 
+            print("Found key:", found_key)
+            print("Decrypted text:", result )
+            write_text('key-found.txt', f"{found_key[0]} {found_key[1]}")
+            write_text('decrypt.txt', result)
         else:
-            print("Key could not be found")
+            print("Key could not be found, try with different text sample")
 
     elif selected_cipher == 'a' and selected_mode == 'k':
         print("You have selected affine cipher cryptogram cryptanalysis")
@@ -224,7 +239,7 @@ def main():
             write_text('decrypt.txt', result)
 
     else:
-        print("You have not selected any cipher or mode")
+        print("You have not selected correct cipher or mode")
 
 if __name__ == '__main__':
     main()
