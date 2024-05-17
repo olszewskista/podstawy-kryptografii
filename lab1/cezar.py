@@ -56,10 +56,16 @@ def caesar(text, key):
             result += char
             continue
         new_char = key + ord(char)
-        if new_char > ord('z'):
-            new_char -= 26
-        elif new_char < ord('a'):
-            new_char += 26
+        if char.isupper():
+            if new_char > ord('Z'):
+                new_char -= 26
+            elif new_char < ord('A'):
+                new_char += 26
+        else:
+            if new_char > ord('z'):
+                new_char -= 26
+            elif new_char < ord('a'):
+                new_char += 26
         
         result += chr(new_char)
     return result
@@ -72,7 +78,9 @@ def caesar_break_text(crypto, extra):
         if not extra_char.isalpha(): continue
         for move in range(0, 26):
             char = ord(crypto_char) + move
-            if char > 122:
+            if chr(char).isupper() and char > 90:
+                char -= 26
+            elif chr(char).islower() and char > 122:
                 char -= 26
             if chr(char) == extra_char:
                 found_key = 26 - move
@@ -101,9 +109,13 @@ def affine_encrypt(text, a, b):
         if not char.isalpha():
             result += char
             continue
-        new_char = ord(char) - 97
+        if char.islower():
+            minus_value = 97
+        else:
+            minus_value = 65
+        new_char = ord(char) - minus_value
         new_char = (a * new_char + b) % 26
-        new_char += 97
+        new_char += minus_value
         result += chr(new_char)
     return result
 
@@ -124,9 +136,13 @@ def affine_decrypt(text, a, b):
         if not char.isalpha():
             result += char
             continue
-        new_char = ord(char) - 97
+        if char.islower():
+            minus_value = 97
+        else:
+            minus_value = 65
+        new_char = ord(char) - minus_value
         new_char = (a_inv * (new_char - b)) % 26
-        new_char += 97
+        new_char += minus_value
         result += chr(new_char)
     return result
 
