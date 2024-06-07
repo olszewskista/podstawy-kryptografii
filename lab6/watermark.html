@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+    <meta name="author" content="Andrzej Borzyszkowski">
+    <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="TEXT/HTML; CHARSET=UTF-8">
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-STORE,NO-CACHE">
+    <META NAME="ROBOTS" CONTENT="NONE">
+    <META name="keywords" content="Andrzej Borzyszkowski, Uniwersytet,
+	Uniwersytet Gdanski, Gdansk, Uniwersytet Gdański, Gdańsk, Informatyka,
+	Informa, UG, II, Kryptografia, Cryptography, CS, Computer Science">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <title>Kryptografia: Algorytm Rabina-Millera</title>
+</head>
+
+<body>
+    <div class="reverse">
+        Andrzej M. Borzyszkowski<img src="../amb-100x100.png" alt="Andrzej M.
+   Borzyszkowski" align="right" height="100" width="100">
+    </div>
+    <div class="reverse">
+        Algorytm Rabina-Millera (test pierwszości i&nbsp;rozkład na czynniki
+        pierwsze)
+    </div>
+    <DIV CLASS="main">
+        <P>Jedną z&nbsp;metod testowania pierwszości liczby jest próba rozkładu na
+            czynniki. Ale dla dużych liczb metoda ta musi zawieść. Właśnie trudność rozkładu
+            dużych liczb jest podstawą algorytmów kryptografii asymetrycznej. Istnieją
+            jednak skuteczne testy pierwszości, wystarczająco wiarygodne dla zastosowań.
+            Czasami dają one rozkład na czynniki pierwsze, a&nbsp;czasami nie.
+        </P>
+        <P>Algorytm Rabina-Millera opiera się na dwóch twierdzeniach:
+        </P>
+        <OL>
+            <LI>
+                <P>Twierdzenie Fermata: jeśli liczba&nbsp;<i></i><i>n</i> jest pierwsza, to
+                    <i></i><i>a<sup>n&minus;1</i></sup>&nbsp;=&nbsp;1 (mod&nbsp;<i></i><i>n</i>).
+                </P>
+                <P>
+                    <i></i><i>Dowód</i>:
+                    Iloczyn wszystkich liczb mniejszych niż&nbsp;<i></i><i>n</i> to&nbsp;(<i>n-1</i><i></i>)! Ale
+                    jeśli wszystkie liczby pomnożymy przez&nbsp;<i></i><i>a</i>, to otrzymamy
+                    ten sam zbiór liczb, <i></i><i>a</i>&nbsp;ma odwrotność,
+                    mnożenie przez&nbsp;<i></i><i>a</i> jest odwracalne. A&nbsp;więc
+                    (<i></i><i>n-1</i>)!&nbsp;=&nbsp;(<i></i><i>n-1</i>)!*<i>a<sup>n&minus;1</i><i></i></sup> (mod&nbsp;<i></i><i>n</i>).
+                </P>
+                <P>
+                    Jeśli <i>a<sup>n&minus;1</i><i></i></sup>&nbsp;=&nbsp;1 (mod&nbsp;<i></i><i>n</i>), to
+                    liczbę&nbsp;<i></i><i>n</i> nazywamy <i>pseudopierwszą</i><i></i> przy podstawie&nbsp;<i></i><i>a</i>,
+                    zaś liczbę&nbsp;<i>a</i><i></i> nazywamy <i>świadkiem pierwszości</i><i></i>
+                    liczby&nbsp;<i>n</i><i></i>.
+                </P>
+                <P>
+                    Liczby Carmichaela są to liczby, które mają komplet świadków pierwszości,
+                    takich liczb jest naprawdę bardzo mało. Ale dla pozostałych liczb złożonych
+                    co najmniej połowa liczb&nbsp;<i>a</i><i></i>, 1&lt;<i></i><i>a</i>&lt;<i></i><i>n</i>, nie jest
+                    świadkiem pierwszości.
+                </P>
+                <P>
+                    Wniosek: Wybieramy&nbsp;<i></i><i>a</i>, sprawdzamy, czy&nbsp;<i>a</i><i></i> ma wspólny
+                    dzielnik z&nbsp;<i></i><i>n</i>. Jeśli nie ma, to sprawdzamy, czy jest świadkiem
+                    pierwszości. Jeśli jest świadkiem, to testujemy kolejnego
+                    kandydata&nbsp;<i>a</i><i></i>. Jeśli kilkadziesiąt razy kolejny kandydat spełni
+                    równość, to jest mało prawdopodobne, by liczba&nbsp;<i></i><i>n</i> była złożona.
+                    Ale każdy nie-świadek jest dowodem, że liczba&nbsp;<i>n</i><i></i> jest złożona
+                    i&nbsp;dalsze testowanie przerywamy. Ale rozkładu nie znamy.
+                </P>
+            <LI>
+                <P>Jeśli <i></i><i>a</i><sup>2</sup>&nbsp;=&nbsp;<i></i><i>b</i><sup>2</sup> (mod&nbsp;<i></i><i>n</i>), to albo
+                    <i></i><i>a&nbsp;=&nbsp;</i>&plusmn;<i>b</i><i></i> (mod&nbsp;<i>n</i><i></i>), albo
+                    NWD(<i></i><i>a&minus;b</i>,<i></i><i>n</i>) jest nietrywialnym dzielnikiem
+                    liczby&nbsp;<i>n</i><i></i>.
+                </P>
+                <P>
+                    <i></i><i>Dowód</i>:
+                    <i></i><i>a</i><sup>2</sup>&minus;<i></i><i>b</i><sup>2</sup>&nbsp;=&nbsp;(<i>a</i><i></i>+<i></i><i>b</i>)*(<i></i><i>a</i>&minus;<i></i><i>b</i>).
+                    Skoro (<i></i><i>a</i>+<i></i><i>b</i>)*(<i></i><i>a</i>&minus;<i></i><i>b</i>)&nbsp;=&nbsp;0 (mod&nbsp;<i>n</i><i></i>), to
+                    albo jeden z&nbsp;czynników jest równy zero, albo mamy rozkład
+                    liczby&nbsp;<i>n</i><i></i>.
+                </P>
+        </OL>
+        <P>Algorytm Rabina-Millera sprawdzania pierwszości liczby&nbsp;<i>n</i><i></i> działa
+            następująco:</P>
+        <OL>
+            <LI>
+                <P>wybieramy dowolne&nbsp;<i>a</i><i></i>, 1&lt;<i></i><i>a</i>&lt;<i>n</i><i></i>, sprawdzamy,
+                    czy przypadkiem NWD(<i></i><i>a</i>,<i>n</i><i></i>) nie daje rozkładu.</P>
+            <LI>
+                <P>stosujemy algorytm szybkiego potęgowania do obliczenia
+                    <i></i><i>a<sup>n&minus;1</i></sup> (mod&nbsp;<i></i><i>n</i>), ale w&nbsp;tej wersji, że
+                    na koniec pozostawiamy podnoszenie do kwadratu. Tzn.
+                    <i>n</i><i></i>&minus;1&nbsp;=&nbsp;<i></i><i>m</i>*2<sup><i>k</i><i></i></sup>,
+                    <i>m</i><i></i>&nbsp;nieparzyste,
+                    <i></i><i>b</i><sub>0</sub>&nbsp;=&nbsp;<i></i><i>a<sup>m</sup></i> (mod&nbsp;<i></i><i>n</i>),
+                    <i></i><i>b<sub>j+1</i></sub>&nbsp;=&nbsp;<i></i><i>b<sub>j</sub><sup>2</sup></i>
+                    (mod&nbsp;<i></i><i>n</i>). Jeśli <i></i><i>b<sub>k</sub></i>&nbsp;&ne;&nbsp;1, to test
+                    Fermata wykazał złożoność. Jeśli <i></i><i>b<sub>k</sub></i>&nbsp;=&nbsp;1, to
+                    szukamy najwcześniejszego <i></i><i>b<sub>j+1</sub></i>&nbsp;=&nbsp;1. Jeśli teraz
+                    <i></i><i>b<sub>j</sub></i>&nbsp;&ne;&nbsp;&minus;1, to mamy nietrywialną równość
+                    kwadratów dającą rozkład liczby&nbsp;<i></i><i>n</i>. Dokładniej, skoro
+                    (<i></i><i>b<sub>j</sub></i>+1)*(<i></i><i>b<sub>j</sub></i>-1)=0 (mod <i></i><i>n</i>), to
+                    NWD(<i></i><i>b<sub>j</sub></i>-1,<i></i><i>n</i>) oraz
+                    NWD(<i></i><i>b<sub>j</sub></i>+1,<i></i><i>n</i>) są nietrywialnymi dzielnikami <i></i><i>n</i>.
+                    Ale jeśli
+                    <i></i><i>b<sub>j</sub></i>&nbsp;=&nbsp;&minus;1, to <i></i><i>n</i> będzie <i></i><i>silnie
+                        pseudopierwszą</i> przy podstawie&nbsp;<i></i><i>a</i>. Podobnie, jeśli
+                    <i></i><i>b</i><sub>0</sub>&nbsp;=&nbsp;&plusmn;1. Wówczas powtarzamy
+                    krok&nbsp;1.
+                </P>
+            <LI>
+                <P>Jeśli wielokrotnie okaże się, że&nbsp;<i></i><i>n</i> jest liczbą silnie
+                    pseudopierwszą, to przyjmujemy, że jest liczbą pierwszą. Prawdpodobieństwo
+                    błędu jest nieznaczące&nbsp;&minus; co najwyżej co czwarta liczba może być
+                    silnym świadkiem pierwszości, prawdopodobieństwo, że&nbsp;<i></i><i>i</i>&nbsp;razy
+                    przypadkowo wybierzemy świadka jest co najwyżej 4<sup>&minus;<i></i><i>i</i></sup>.</P>
+        </OL>
+        <P>Algorytm Rabina-Millera ma jeszcze jedno zastosowanie. Załóżmy, że
+            <i></i><i>r</i>&nbsp;jest wykładnikiem uniwersalnym dla&nbsp;<i></i><i>n</i>, tzn. jeśli
+            1&lt;<i></i><i>a</i>&lt;<i></i><i>n</i>, NWD(<i></i><i>a</i>,<i></i><i>n</i>)&nbsp;=&nbsp;1, to <i></i><i>a<sup>r</sup></i>&nbsp;=&nbsp;1
+            (mod&nbsp;<i></i><i>n</i>). Wówczas w&nbsp;algorytmie Rabina-Millera używamy
+            potęgi&nbsp;<i></i><i>r</i> zamiast <i></i><i>n</i>&minus;1 i&nbsp;na pewno nie zdarzy się przypadek
+            <i></i><i>b<sub>k</sub></i>&nbsp;&ne;&nbsp;1. Jeśli więc liczba&nbsp;<i></i><i>n</i> jest złożona, to prawie na pewno
+            znajdziemy jej rozkład.
+        </P>
+        <P>
+            Przykład wykładnika uniwersalnego, to potencjalna znajomość obu kluczy
+            w&nbsp;algorytmie RSA. W&nbsp;algorytmie tym wybiera się dwie liczby pierwsze,
+            <i></i><i>p</i>&nbsp;i&nbsp;<i></i><i>q</i>, definiuje się <i></i><i>n</i>&nbsp;=&nbsp; <i></i><i>p</i>*<i></i><i>q</i>, następnie
+            wybiera się dwie liczby <i></i><i>d</i>&nbsp;i&nbsp;<i></i><i>e</i> wzajemnie odwrotne
+            (mod&nbsp;(<i></i><i>p</i>&minus;1)*(<i></i><i>q</i>&minus;1)), jednym z&nbsp;kluczy jest para
+            (<i></i><i>n</i>,<i></i><i>d</i>), drugim para (<i></i><i>n</i>,<i></i><i>e</i>). Funkcje szyfrowania
+            i&nbsp;odszyfrowywania wiadomości&nbsp;<i></i><i>a</i>, 1&lt;<i></i><i>a</i>&lt;<i></i><i>n</i>, to
+            <i></i><i>a<sup>e</sup></i> (mod&nbsp;<i></i><i>n</i>) oraz <i></i><i>a<sup>d</sup></i> (mod&nbsp;<i></i><i>n</i>). Wówczas
+            <i></i><i>d</i>*<i></i><i>e</i>&minus;1 jest wielokrotnością funkcji Eulera (<i></i><i>p</i>&minus;1)*(<i></i><i>q</i>&minus;1)
+            i&nbsp;jest wykładnikiem uniwersalnym.
+        </P>
+        <P>
+            Zastosowanie algorytmu Rabina-Millera do znajdowania rozkładu jest czysto
+            teoretyczne. Rozkład liczby&nbsp;<i></i><i>n</i> na czynniki jest potrzebny by znaleźć klucz
+            prywatny (<i></i><i>n</i>,<i></i><i>d</i>) znając klucz publiczny (<i></i><i>n</i>,<i></i><i>e</i>). Gdy
+            znane są oba klucze, szukanie rozkładu nie jest nikomu potrzebne. Jest to tylko
+            dowód, że znajomość rozkładu jest równoważna umiejętności znajdowania klucza
+            prywatnego. Również przypadkowe znalezienie rozkładu jest mało prawdopodobe dla
+            liczb nie mających małych dzielników.
+        </P>
+        <P>
+            Zastosowanie algorytmu Rabina-Millera do testowania pierwszości jest bardzo
+            ważne. Jest on niewiele bardziej skomplikowany niż test Fermata, a&nbsp;wymaga
+            mniejszej liczby iteracji.
+        </P>
+        <P>
+            Uwaga: Algorytm ma zastosowanie do liczb wielkości kilkuset bitów. Dlatego też
+            potrzebne będą specjalne narzędzia do obsługi tych liczb. W&nbsp;niektórych
+            językach, np. python czy ruby są one wbudowane. Ale pisząc program w&nbsp;javie
+            trzeba będzie odwołac się do biblioteki <FONT FACE="Courier 10
+Pitch">java.math.BigInteger</FONT>, a&nbsp;w&nbsp;języku&nbsp;C - do biblioteki
+            <FONT FACE="Courier 10 Pitch">gmp.h</FONT>.
+        </P>
+        <H1>Zadanie:</H1>
+        <P>Program o&nbsp;nazwie
+            <FONT FACE="Courier 10 Pitch">rabinmiller</FONT> czyta plik
+            <FONT FACE="Courier 10 Pitch">wejscie.txt</FONT> zawierający jeden, dwa lub trzy
+            wiersze. W&nbsp;pierwszym wierszu znajduje się liczba&nbsp;<i></i><i>n</i>. Jeśli jest
+            drugi wiersz, to zawiera on wykładnik uniwersalny, ułatwiający rozkład. Jeśli
+            jest trzeci wiersz, to wykładnikiem uniwersalnym jest iloczyn liczb w&nbsp;drugim
+            i&nbsp;trzecim wierszu minus jeden.
+        </P>
+        <P>Program zapisuje w&nbsp;pliku
+            <FONT FACE="Courier 10 Pitch">wyjscie.txt</FONT> jedną z&nbsp;trzech wiadomości:
+            &bdquo;prawdopodobnie pierwsza&rdquo;, &bdquo;na pewno złożona&rdquo;, lub
+            liczbę będącą dzielnikiem liczby&nbsp;<i></i><i>n</i>. Zapis &bdquo;prawdopodobnie
+            pierwsza&rdquo; ma prawo się pojawić, jeśli prawdopodobieństwo, że liczba jest
+            złożona jest mniejsza niż 2<sup>&minus;40</sup>.
+        </P>
+        <P>
+            Program
+            <FONT FACE="Courier 10 Pitch">rabinmiller</FONT> wywołany z&nbsp;opcją
+            <FONT FACE="Courier 10 Pitch">-f</FONT> będzie dokonywać jedynie testu Fermata,
+            tzn. będzie badać jedynie ostatnią potęgę potencjalnego świadka pierwszości.
+            W&nbsp;szczególności, program nie będzie czytał dalszych wierszy w&nbsp;pliku
+            wejściowym i&nbsp;nie będzie okazji do znalezienia rozkładu.
+        </P>
+        <P>
+            Testowy plik wejściowy <A HREF="wejscie.txt">
+                <FONT FACE="Courier 10 Pitch">wejscie.txt</FONT>
+            </A> będzie zawierał liczby
+        <pre>
+718548065973745507
+3449
+543546506135745129
+</pre>
+        program powinien wyprodukować jeden z&nbsp;dwóch poniższych wyników
+        <pre>
+740876531
+969862097
+</pre>
+        (ich iloczyn jest równy 718548065973745507, podczas działania programu okaże się,
+        że 576566739470926048 jest pierwiastkiem z&nbsp;1 mod&nbsp;718548065973745507).
+        </P>
+        <P>
+            Program wywołany z opcją -f nie odkryje, że 561 (liczba Carmichaela) jest liczbą
+            złożoną, a wywołany w pełnej wersji odkryje, że 561=33*17.
+        <P>
+            Uwaga: stosowanie bibliotek do obsługi dużych liczb może być konieczne.
+            Stosowanie bibliotek z&nbsp;wbudowanym testem Rabina-MIllera oczywiście mija
+            się z&nbsp;celem zadania.
+        </P>
+        </P>
+    </DIV>
+    <DIV CLASS="reverse">
+        <!--
+<A HREF="index.html">Plan zajęć</A>-->
+    </DIV>
+</BODY>
+
+</HTML>
